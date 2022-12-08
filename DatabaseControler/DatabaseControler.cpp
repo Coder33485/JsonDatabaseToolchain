@@ -2,6 +2,11 @@
 
 JDBKey::JDBKey(size_t Id)
 {
+	Description = u8"Description";
+	Name = u8"Name";
+	Author = u8"Author";
+	Toolchain = u8"Toolchain";
+	Version = u8"Version";
 	SetKey(Id);
 }
 
@@ -10,23 +15,13 @@ void JDBKey::SetKey(size_t Id)
 	switch (Id)
 	{
 	case 1:
-		Description = u8"Description";
-		Name = u8"Name";
-		Author = u8"Author";
 		Message = u8"Block";
-		Toolchain = u8"Toolchain";
-		Version = u8"Version";
 		Identification = u8"VersionCode";
 		TableNameList = u8"Tables";
 		FieldNameList = u8"Fields";
 		break;
 	case 2:
-		Description = u8"Description";
-		Name = u8"Name";
-		Author = u8"Author";
 		Message = u8"Message";
-		Toolchain = u8"Toolchain";
-		Version = u8"Version";
 		Identification = u8"Identification";
 		TableNameList = u8"TableNameList";
 		FieldNameList = u8"FieldNameList";
@@ -39,11 +34,13 @@ void JDBKey::SetKey(size_t Id)
 size_t AnalysisDatabaseVersion_Inside(DatabaseHandle& Handle)
 {
 	JDBKey Key(1);
-	if (Handle.Data[Key.Description][Key.Identification].is_number() &&
+	if (Handle.Data[Key.Description].contains(Key.Identification) &&
+		Handle.Data[Key.Description][Key.Identification].is_number() &&
 		Handle.Data[Key.Description][Key.Identification] == 1)
 		return 1;
 	Key.SetKey(2);
-	if (Handle.Data[Key.Description][Key.Identification].is_number() &&
+	if (Handle.Data[Key.Description].contains(Key.Identification) &&
+		Handle.Data[Key.Description][Key.Identification].is_number() &&
 		Handle.Data[Key.Description][Key.Identification] == 2)
 		return 2;
 	return 0;
@@ -147,7 +144,7 @@ bool LoadDatabase(DatabaseHandle& Handle, const std::string Path)
 	{
 	case 1:
 	case 2:
-		if (Handle.Data.is_object() && Handle.Data[Key.Description][Key.Identification].is_number())
+		if (Handle.Data.is_object() && Handle.Data[Key.Description].contains(Key.Identification) && Handle.Data[Key.Description][Key.Identification].is_number())
 		{
 			Identification = Handle.Data[Key.Description][Key.Identification];
 			if (std::find(std::begin(LoadSupportedIdentification), std::end(LoadSupportedIdentification), Identification) != std::end(LoadSupportedIdentification))
@@ -279,7 +276,7 @@ bool CreateTable(DatabaseHandle& Handle, const std::string TableName)
 	case 2:
 		if (TableName == Key.TableNameList || TableName == Key.Description)
 			return false;
-		if (Handle.Data[TableName].is_object())
+		if (Handle.Data.contains(TableName))
 			return false;
 		//stringlist TableNameList;
 		listsize = Handle.Data[Key.TableNameList].size();
@@ -315,7 +312,7 @@ bool DeleteTable(DatabaseHandle& Handle, const std::string TableName)
 	case 2:
 		if (TableName == Key.TableNameList || TableName == Key.Description)
 			return false;
-		if (!Handle.Data[TableName].is_object())
+		if (!Handle.Data.contains(TableName))
 			return false;
 		//stringlist TableNameList;
 		listsize = Handle.Data[Key.TableNameList].size();
@@ -351,7 +348,7 @@ bool SelectTable(DatabaseHandle& Handle, const std::string TableName)
 	case 2:
 		if (TableName == Key.TableNameList || TableName == Key.Description)
 			return false;
-		if (!Handle.Data[TableName].is_object())
+		if (!Handle.Data.contains(TableName) || !Handle.Data[TableName].is_object())
 			return false;
 		//stringlist TableNameList;
 		Handle.Selected = true;
@@ -378,12 +375,10 @@ bool RenameTable(DatabaseHandle& Handle, const std::string OldTableName, const s
 	case 2:
 		if (OldTableName == Key.TableNameList || OldTableName == Key.Description || NewTableName == Key.TableNameList || NewTableName == Key.Description)
 			return false;
-		if (!Handle.Data[OldTableName].is_object())
+		if (!Handle.Data.contains(OldTableName))
 			return false;
-		if (Handle.Data[NewTableName].is_object())
+		if (Handle.Data.contains(OldTableName))
 			return false;
-		//stringlist TableNameList;
-		
 		listsize = Handle.Data[Key.TableNameList].size();
 		for (size_t i = 0; i < listsize; i++)
 			if (OldTableName == Handle.Data[Key.TableNameList][i])
@@ -466,7 +461,7 @@ bool CreateField(DatabaseHandle& Handle, const std::string FieldName)
 			return false;
 		if (FieldName == Key.FieldNameList || FieldName == Key.Description)
 			return false;
-		if (Handle.Data[Handle.Table][FieldName].is_array())
+		if (Handle.Data[Handle.Table].contains(FieldName))
 			return false;
 		//stringlist FieldNameList;
 		listsize = Handle.Data[Handle.Table][Key.FieldNameList].size();
@@ -508,7 +503,7 @@ bool DeleteField(DatabaseHandle& Handle, const std::string FieldName)
 			return false;
 		if (FieldName == Key.FieldNameList || FieldName == Key.Description)
 			return false;
-		if (!Handle.Data[Handle.Table][FieldName].is_array())
+		if (!Handle.Data[Handle.Table].contains(FieldName))
 			return false;
 		//stringlist FieldNameList;
 		listsize = Handle.Data[Handle.Table][Key.FieldNameList].size();
@@ -543,9 +538,9 @@ bool RenameField(DatabaseHandle& Handle, const std::string OldFieldName, const s
 			return false;
 		if (OldFieldName == Key.FieldNameList || OldFieldName == Key.Description || NewFieldName == Key.FieldNameList || NewFieldName == Key.Description)
 			return false;
-		if (!Handle.Data[Handle.Table][OldFieldName].is_array())
+		if (!Handle.Data[Handle.Table].contains(OldFieldName))
 			return false;
-		if (Handle.Data[Handle.Table][NewFieldName].is_array())
+		if (Handle.Data[Handle.Table].contains(NewFieldName))
 			return false;
 		//stringlist FieldNameList;
 		listsize = Handle.Data[Handle.Table][Key.FieldNameList].size();
@@ -580,7 +575,7 @@ bool GetFieldData(DatabaseHandle& Handle, const std::string FieldName, stringlis
 			return false;
 		if (FieldName == Key.FieldNameList || FieldName == Key.Description)
 			return false;
-		if (!Handle.Data[Handle.Table][FieldName].is_array())
+		if (!Handle.Data[Handle.Table].contains(FieldName))
 			return false;
 		FieldData.clear();
 		UnitNum = Handle.Data[Handle.Table][FieldName].size();
