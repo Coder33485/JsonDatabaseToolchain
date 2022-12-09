@@ -68,11 +68,18 @@ void CGetNumberInputDlg::OnOK()
 	// TODO: 在此添加专用代码和/或调用基类
 	CString LocalBuffer;
 	m_Edit.GetWindowText(LocalBuffer);
-	std::wstringstream wss;
-	wss.clear();
-	wss << LocalBuffer.GetString();
-	wss >> *m_Number;
-	CDialogEx::OnOK();
+	if (LocalBuffer == L"")
+		*m_Number = -1;
+	else
+	{
+		std::wstringstream wss;
+		wss.clear();
+		wss << LocalBuffer.GetString();
+		wss >> *m_Number;
+		CDialogEx::OnOK();
+		return;
+	}
+	CDialogEx::OnCancel();
 }
 
 

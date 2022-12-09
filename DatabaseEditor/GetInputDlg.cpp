@@ -80,6 +80,8 @@ void CGetInputDlg::OnOK()
 	if (LocalBuffer != L"")
 	{
 		*m_Buffer = LocalBuffer;
+		CDialogEx::OnOK();
+		return;
 	}
-	CDialogEx::OnOK();
+	CDialogEx::OnCancel();
 }

@@ -2,16 +2,18 @@
 
 [中文](http://www.github.com/Coder33485/JsonDatabaseToolchain/blob/master/README-zh.md) | English
 
+> It should be noted that all the operations mentioned below do not have a secondary confirmation link, please operate carefully.
+
 ## Menu
 
 ### File
 
 - `New database` Create a new database.
 - `Open database` Open an existing database, you can also drag a database file to window to open the database.
-- `Close database` Close the database which is opened. <u>(Secondary confirmation is not provided)</u>
+- `Close database` Close the database which is opened.
 - `Save database` Save the database.
 - `Save as` Save the database to another location.
-- `Exit` Exit the program. <u>(Secondary confirmation is not provided)</u>
+- `Exit` Exit the program.
 
 ### Edit
 
@@ -51,6 +53,12 @@
 ## Shortcut key
 
 - `Ctrl` + `S` Save database.
+
+## About canceling operations
+
+> `Add a row` and `Add multiple rows` can cancel the operation when entering the first value of each line, enter '/exit' '$exit' 'exit' or not. <br/>
+> All other operations that require data entry can be canceled before the final entry is completed, and a null value can be submitted in either input box. <br/>
+> Other operations that do not require data entry cannot be canceled.
 
 ## At last
 

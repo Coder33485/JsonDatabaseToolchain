@@ -70,7 +70,10 @@ public:
 	virtual void OnOK();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 private:
-	bool m_CtrlDown;
+	bool m_LCtrlDown;
+	bool m_RCtrlDown;
+	bool m_LShiftDown;
+	bool m_RShiftDown;
 public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnTblDescription();

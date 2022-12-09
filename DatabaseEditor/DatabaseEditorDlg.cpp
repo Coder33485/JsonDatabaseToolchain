@@ -75,6 +75,10 @@ CDatabaseEditorDlg::CDatabaseEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DATABASEEDITOR_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_LCtrlDown = false;
+	m_RCtrlDown = false;
+	m_LShiftDown = false;
+	m_RShiftDown = false;
 }
 
 void CDatabaseEditorDlg::DoDataExchange(CDataExchange* pDX)
@@ -134,8 +138,6 @@ BOOL CDatabaseEditorDlg::OnInitDialog()
 
 	AdjustColumnWidth(&m_ListCtrl);
 
-	m_CtrlDown = false;
-
 	// TODO: 在此添加额外的初始化代码
 	InitDatabaseHandle(Database);
 
@@ -166,9 +168,7 @@ void CDatabaseEditorDlg::OnPaint()
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
-	{
 		CDialogEx::OnPaint();
-	}
 }
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
@@ -209,8 +209,7 @@ void CDatabaseEditorDlg::OnAddFd()
 	CString FdName, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_NEW_FD_NAME);
-	Dlg.StartDialog(&FdName, Tip);
-	if (FdName == L"")
+	if (Dlg.StartDialog(&FdName, Tip) == IDCANCEL)
 		return;
 	fd_name = CW2A(FdName, CP_UTF8);
 	CreateField(Database, fd_name);
@@ -226,8 +225,7 @@ void CDatabaseEditorDlg::OnAddTbl()
 	CString TblName, Tip;
 	std::string tbl_name;
 	Tip.LoadString(IDS_TBL_NAME);
-	Dlg.StartDialog(&TblName, Tip);
-	if (TblName == L"")
+	if (Dlg.StartDialog(&TblName, Tip) == IDCANCEL)
 		return;
 	tbl_name = CW2A(TblName, CP_UTF8);
 	CreateTable(Database, tbl_name);
@@ -262,8 +260,7 @@ void CDatabaseEditorDlg::OnDelFd()
 	CString FdName, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_FD_NAME);
-	Dlg.StartDialog(&FdName, Tip);
-	if (FdName == L"")
+	if (Dlg.StartDialog(&FdName, Tip) == IDCANCEL)
 		return;
 	fd_name = CW2A(FdName, CP_UTF8);
 	DeleteField(Database, fd_name);
@@ -279,8 +276,7 @@ void CDatabaseEditorDlg::OnDelTbl()
 	CString TblName, Tip;
 	std::string tbl_name;
 	Tip.LoadString(IDS_TBL_NAME);
-	Dlg.StartDialog(&TblName, Tip);
-	if (TblName == L"")
+	if (Dlg.StartDialog(&TblName, Tip) == IDCANCEL)
 		return;
 	tbl_name = CW2A(TblName, CP_UTF8);
 	DeleteTable(Database, tbl_name);
@@ -297,13 +293,16 @@ void CDatabaseEditorDlg::OnNewDb()
 	CString Path, Name, Author, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_DB_PATH);
-	Dlg.StartDialog(&Path, Tip);
+	if (Dlg.StartDialog(&Path, Tip) == IDCANCEL)
+		return;
 	path = CW2A(Path, CP_UTF8);
 	Tip.LoadString(IDS_DB_NAME);
-	Dlg.StartDialog(&Name, Tip);
+	if (Dlg.StartDialog(&Name, Tip) == IDCANCEL)
+		return;
 	name = CW2A(Name, CP_UTF8);
 	Tip.LoadString(IDS_DB_AUTHOR);
-	Dlg.StartDialog(&Author, Tip);
+	if (Dlg.StartDialog(&Author, Tip) == IDCANCEL)
+		return;
 	author = CW2A(Author, CP_UTF8);
 	CreateDatabase(Database, path, name, author);
 	// TODO: 在此添加命令处理程序代码
@@ -318,7 +317,8 @@ void CDatabaseEditorDlg::OnOpenDb()
 	CString Path, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_DB_PATH);
-	Dlg.StartDialog(&Path, Tip);
+	if (Dlg.StartDialog(&Path, Tip) == IDCANCEL)
+		return;
 	path = CW2A(Path, CP_UTF8);
 	LoadDatabase(Database, path);
 	FlushTables();
@@ -333,13 +333,11 @@ void CDatabaseEditorDlg::OnRenameTbl()
 	CString OldTblName, NewTblName, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_TBL_NAME);
-	Dlg.StartDialog(&OldTblName, Tip);
-	if (OldTblName == L"")
+	if (Dlg.StartDialog(&OldTblName, Tip) == IDCANCEL)
 		return;
 	old_table_name = CW2A(OldTblName, CP_UTF8);
 	Tip.LoadString(IDS_NEW_TBL_NAME);
-	Dlg.StartDialog(&NewTblName, Tip);
-	if (NewTblName == L"")
+	if (Dlg.StartDialog(&NewTblName, Tip) == IDCANCEL)
 		return;
 	new_table_name = CW2A(NewTblName, CP_UTF8);
 	RenameTable(Database, old_table_name, new_table_name);
@@ -357,13 +355,11 @@ void CDatabaseEditorDlg::OnRenemeFd()
 	CString OldFdName, NewFdName, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_FD_NAME);
-	Dlg.StartDialog(&OldFdName, Tip);
-	if (OldFdName == L"")
+	if (Dlg.StartDialog(&OldFdName, Tip) == IDCANCEL)
 		return;
 	old_field_name = CW2A(OldFdName, CP_UTF8);
 	Tip.LoadString(IDS_NEW_FD_NAME);
-	Dlg.StartDialog(&NewFdName, Tip);
-	if (NewFdName == L"")
+	if (Dlg.StartDialog(&NewFdName, Tip) == IDCANCEL)
 		return;
 	new_field_name = CW2A(NewFdName, CP_UTF8);
 	RenameField(Database, old_field_name, new_field_name);
@@ -387,7 +383,8 @@ void CDatabaseEditorDlg::OnSaveAs()
 	CString Path, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_DB_PATH);
-	Dlg.StartDialog(&Path, Tip);
+	if (Dlg.StartDialog(&Path, Tip) == IDCANCEL)
+		return;
 	path = CW2A(Path, CP_UTF8);
 	SaveDatabaseTo(Database, path);
 }
@@ -484,10 +481,7 @@ void CDatabaseEditorDlg::FlushTables()
 	if (!GetTableList(Database, table_list))
 		return;
 	for (size_t i = 0; i < table_list.size(); i++)
-	{
-		UTF8ToGBK(table_list[i], w_str);
-		m_ComboTables.AddString(w_str.c_str());
-	}
+		UTF8ToGBK(table_list[i], w_str); m_ComboTables.AddString(w_str.c_str());
 	m_ComboTables.SetCurSel(0);
 	OnCbnSelchangeTblCombo();
 }
@@ -519,16 +513,22 @@ BOOL CDatabaseEditorDlg::PreTranslateMessage(MSG* pMsg)
 		switch (pMsg->wParam)
 		{
 		case 'S'://Ctrl + S
-			if (m_CtrlDown)
-			{
-				OnSaveDb();
-				return TRUE;
-			}
+			if ((m_LCtrlDown || m_RCtrlDown) && !(m_LShiftDown || m_RShiftDown))
+				OnSaveDb(); return TRUE;
+			if ((m_LCtrlDown || m_RCtrlDown) && (m_LShiftDown || m_RShiftDown))
+				OnSaveAs(); return TRUE;
 			break;
-		case VK_CONTROL:
-			m_CtrlDown = true;
+		case VK_LCONTROL:
+			m_LCtrlDown = true;
 			return TRUE;
-		default:
+		case VK_RCONTROL:
+			m_LCtrlDown = true;
+			return TRUE;
+		case VK_LSHIFT:
+			m_LShiftDown = true;
+			return TRUE;
+		case VK_RSHIFT:
+			m_RShiftDown = true;
 			return TRUE;
 		}
 	}
@@ -536,9 +536,22 @@ BOOL CDatabaseEditorDlg::PreTranslateMessage(MSG* pMsg)
 	{
 		switch (pMsg->wParam)
 		{
-		case VK_CONTROL:
-			m_CtrlDown = false;
+		case VK_LCONTROL:
+			m_LCtrlDown = false;
 			return TRUE;
+			break;
+		case VK_RCONTROL:
+			m_LCtrlDown = false;
+			return TRUE;
+			break;
+		case VK_LSHIFT:
+			m_LShiftDown = false;
+			return TRUE;
+			break;
+		case VK_RSHIFT:
+			m_RShiftDown = false;
+			return TRUE;
+			break;
 		}
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
@@ -579,7 +592,8 @@ void CDatabaseEditorDlg::OnDelRow()
 		return;
 	size_t id = 0;
 	CGetNumberInputDlg Dlg;
-	Dlg.StartDialog(&id, L"行号");
+	if (Dlg.StartDialog(&id, L"行号") == IDCANCEL)
+		return;
 	DeleteLine(Database, id);
 	FlushFields();
 }
@@ -593,8 +607,10 @@ void CDatabaseEditorDlg::OnDelMultiRow()
 		return;
 	size_t id = 0, num = 0;
 	CGetNumberInputDlg Dlg;
-	Dlg.StartDialog(&id, L"起始行号");
-	Dlg.StartDialog(&num, L"行数");
+	if (Dlg.StartDialog(&id, L"起始行号") == IDCANCEL)
+		return;
+	if (Dlg.StartDialog(&num, L"行数") == IDCANCEL)
+		return;
 	DeleteLine(Database, id, num);
 	FlushFields();
 }
@@ -621,13 +637,21 @@ void CDatabaseEditorDlg::OnAddRow()
 	stringlist list;
 	GetFieldList(Database, list);
 	CGetInputDlg Dlg;
-	CString Unit;
+	CString Unit, Tip;
+	Tip.LoadString(IDS_EXIT_TIP);
 	std::wstring w_str;
 	stringlist unit_list;
 	for (size_t i = 0; i < list.size(); i++)
 	{
 		UTF8ToGBK(list[i], w_str);
-		Dlg.StartDialog(&Unit, w_str.c_str());
+		if (i == 0)
+			Dlg.StartDialog(&Unit, (w_str + Tip.GetString()).c_str());
+		else
+			Dlg.StartDialog(&Unit, w_str.c_str());
+		if (i == 0 && (Unit == L"/exit" || Unit == L"$exit" || Unit == L"\\exit"))
+		{
+			break;
+		}
 		unit_list.push_back(std::string(CW2A(Unit, CP_UTF8)));
 	}
 	AppendLine(Database, unit_list);
@@ -693,8 +717,7 @@ void CDatabaseEditorDlg::OnRenameThisTbl()
 	CString NewTblName, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_NEW_TBL_NAME);
-	Dlg.StartDialog(&NewTblName, Tip);
-	if (NewTblName == L"")
+	if (Dlg.StartDialog(&NewTblName, Tip) == IDCANCEL)
 		return;
 	new_table_name = CW2A(NewTblName, CP_UTF8);
 	RenameTable(Database, Database.Table, new_table_name);
