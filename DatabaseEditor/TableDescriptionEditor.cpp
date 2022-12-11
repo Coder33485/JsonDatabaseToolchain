@@ -44,7 +44,7 @@ BOOL CTableDescriptionEditor::OnInitDialog()
 		OnCancel();
 
 	std::wstring w_str;
-	UTF8ToGBK(DB_Handle->TBL_Description.Message, w_str);
+	StringToWstring(DB_Handle->TBL_Description.Message, w_str);
 	m_EditBlock.SetWindowText(w_str.c_str());
 
 	return TRUE;  // return TRUE unless you set the focus to a control

@@ -128,13 +128,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="LogControler.cpp" />
-    <ClCompile Include="PipeControler.cpp" />
     <ClCompile Include="ShotcutControler.cpp" />
     <ClCompile Include="StringProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LogControler.h" />
-    <ClInclude Include="PipeControler.h" />
     <ClInclude Include="ShotcutControler.h" />
     <ClInclude Include="StringProcessor.h" />
   </ItemGroup>

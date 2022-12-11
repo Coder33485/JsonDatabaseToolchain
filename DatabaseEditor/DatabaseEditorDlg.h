@@ -8,10 +8,9 @@
 #include "GetNumberInputDlg.h"
 #include "DatabaseDescriptionEditor.h"
 #include "TableDescriptionEditor.h"
-#include "MyConvert.h"
 
 #include <DatabaseControler.h>
-#include <iostream>
+#include <StringProcessor.h>
 #include <sstream>
 
 

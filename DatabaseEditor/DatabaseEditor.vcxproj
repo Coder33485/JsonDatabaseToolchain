@@ -193,7 +193,6 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="GetInputDlg.h" />
     <ClInclude Include="GetNumberInputDlg.h" />
-    <ClInclude Include="MyConvert.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="TableDescriptionEditor.h" />
@@ -205,7 +204,6 @@
     <ClCompile Include="DatabaseEditorDlg.cpp" />
     <ClCompile Include="GetInputDlg.cpp" />
     <ClCompile Include="GetNumberInputDlg.cpp" />
-    <ClCompile Include="MyConvert.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

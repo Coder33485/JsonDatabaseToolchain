@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "afxdialogex.h"
-#include "MyConvert.h"
 
 #include <DatabaseControler.h>
+#include <StringProcessor.h>
 
 
 // CDatabaseDescriptionEditor 对话框

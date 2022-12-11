@@ -18,9 +18,6 @@
     <ClCompile Include="LogControler.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="PipeControler.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="ShotcutControler.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -30,9 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LogControler.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PipeControler.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ShotcutControler.h">

@@ -64,15 +64,15 @@ BOOL CDatabaseDescriptionEditor::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	std::wstring w_str;
-	UTF8ToGBK(DB_Handle->DB_Description.Name, w_str);
+	StringToWstring(DB_Handle->DB_Description.Name, w_str);
 	m_EditName.SetWindowText(w_str.c_str());
-	UTF8ToGBK(DB_Handle->DB_Description.Author, w_str);
+	StringToWstring(DB_Handle->DB_Description.Author, w_str);
 	m_EditAuthor.SetWindowText(w_str.c_str());
-	UTF8ToGBK(DB_Handle->DB_Description.Version, w_str);
+	StringToWstring(DB_Handle->DB_Description.Version, w_str);
 	m_EditVersion.SetWindowText(w_str.c_str());
-	UTF8ToGBK(DB_Handle->DB_Description.Toolchain, w_str);
+	StringToWstring(DB_Handle->DB_Description.Toolchain, w_str);
 	m_EditToolchain.SetWindowText(w_str.c_str());
-	UTF8ToGBK(DB_Handle->DB_Description.Message, w_str);
+	StringToWstring(DB_Handle->DB_Description.Message, w_str);
 	m_EditBlock.SetWindowText(w_str.c_str());
 
 

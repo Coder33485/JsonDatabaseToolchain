@@ -42,9 +42,6 @@
     <ClInclude Include="GetNumberInputDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MyConvert.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="TableDescriptionEditor.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -63,9 +60,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GetInputDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MyConvert.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TableDescriptionEditor.cpp">

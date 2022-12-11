@@ -446,7 +446,7 @@ void CDatabaseEditorDlg::FlushFields()
 	m_ListCtrl.InsertColumn(0, ID);
 	for (size_t i = 0; i < list.size(); i++)
 	{
-		UTF8ToGBK(list[i], wstr);
+		StringToWstring(list[i], wstr);
 		m_ListCtrl.InsertColumn(i + 1, wstr.c_str());
 		//#error "字符串是UTF8没有问题，但是汉字无法转为GBK显示，使用CA2W结果还是UTF8编码"
 		GetFieldData(Database, list[i], dat);
@@ -457,13 +457,13 @@ void CDatabaseEditorDlg::FlushFields()
 				wss << j;
 				wss >> wstr;
 				m_ListCtrl.InsertItem(j, wstr.c_str());
-				UTF8ToGBK(dat[j], wstr);
+				StringToWstring(dat[j], wstr);
 				m_ListCtrl.SetItemText(j, i + 1, wstr.c_str());
 			}
 		else
 			for (size_t j = 0; j < dat.size(); j++)
 			{
-				UTF8ToGBK(dat[j], wstr);
+				StringToWstring(dat[j], wstr);
 				m_ListCtrl.SetItemText(j, i + 1, wstr.c_str());
 			}
 	}
@@ -481,7 +481,7 @@ void CDatabaseEditorDlg::FlushTables()
 	if (!GetTableList(Database, table_list))
 		return;
 	for (size_t i = 0; i < table_list.size(); i++)
-		UTF8ToGBK(table_list[i], w_str); m_ComboTables.AddString(w_str.c_str());
+		StringToWstring(table_list[i], w_str); m_ComboTables.AddString(w_str.c_str());
 	m_ComboTables.SetCurSel(0);
 	OnCbnSelchangeTblCombo();
 }
@@ -643,7 +643,7 @@ void CDatabaseEditorDlg::OnAddRow()
 	stringlist unit_list;
 	for (size_t i = 0; i < list.size(); i++)
 	{
-		UTF8ToGBK(list[i], w_str);
+		StringToWstring(list[i], w_str);
 		if (i == 0)
 			Dlg.StartDialog(&Unit, (w_str + Tip.GetString()).c_str());
 		else
@@ -678,7 +678,7 @@ void CDatabaseEditorDlg::OnAddMultiRow()
 		unit_list.clear();
 		for (size_t i = 0; i < list.size(); i++)
 		{
-			UTF8ToGBK(list[i], w_str);
+			StringToWstring(list[i], w_str);
 			if (i == 0)
 				Dlg.StartDialog(&Unit, (w_str + Tip.GetString()).c_str());
 			else
