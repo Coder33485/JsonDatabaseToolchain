@@ -53,6 +53,7 @@
 ## Shortcut key
 
 - `Ctrl` + `S` Save database.
+- `Ctrl` + `K` -> `Ctrl` + `S` Save the database to another location.
 
 ## About canceling operations
 
