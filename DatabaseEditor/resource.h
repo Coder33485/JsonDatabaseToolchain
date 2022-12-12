@@ -47,6 +47,7 @@
 #define IDC_ADD_ROW_BUTTON              10024
 #define IDC_ADD_MULTI_ROW_BUTTON        10025
 #define IDC_GETINPUT_NUMBER_EDIT        10026
+#define IDC_EXFUNC_WAIT_STATIC          10027
 #define IDD_ABOUTBOX                    20001
 #define IDD_DATABASEEDITOR_DIALOG       20002
 #define IDR_MAINFRAME                   20003
@@ -64,14 +65,18 @@
 #define IDS_NEW_TBL_NAME                20015
 #define IDD_TBL_DESCRIPTION_DIALOG      20016
 #define IDD_GETINPUT_DIALOG_NUMBER      20017
+#define IDS_ROW_NUMBER                  20018
+#define IDS_BEGIN_ROW_NUMBER            20019
+#define IDS_NUMBER_OF_ROW               20020
+#define IDM_EXTERN_COMMAND              40000
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        20017
+#define _APS_NEXT_RESOURCE_VALUE        20021
 #define _APS_NEXT_COMMAND_VALUE         132
-#define _APS_NEXT_CONTROL_VALUE         10027
-#define _APS_NEXT_SYMED_VALUE           1000
+#define _APS_NEXT_CONTROL_VALUE         10028
+#define _APS_NEXT_SYMED_VALUE           1001
 #endif
 #endif

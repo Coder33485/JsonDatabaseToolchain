@@ -102,9 +102,7 @@ bool CreateDatabase(DatabaseHandle& Handle, const std::string Path, const std::s
 		_unlink(Path.c_str());
 	}
 	else
-	{
 		return false;
-	}
 	JDBKey Key(CREATE_VERSION_CODE);
 	Handle.Loaded = true;
 	Handle.Selected = false;
@@ -471,10 +469,8 @@ bool CreateField(DatabaseHandle& Handle, const std::string FieldName)
 			Handle.Data[Handle.Table][FieldName] = nlohmann::json::array();
 			FieldDataLength = Handle.Data[Handle.Table][std::string(Handle.Data[Handle.Table][Key.FieldNameList][0])].size();
 			if (FieldDataLength > 0)
-			{
 				for (size_t i = 0; i < FieldDataLength; i++)
 					Handle.Data[Handle.Table][FieldName][i] = std::string();
-			}
 		}
 		else
 		{

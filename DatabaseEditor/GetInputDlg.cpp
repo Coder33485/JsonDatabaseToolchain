@@ -83,5 +83,7 @@ void CGetInputDlg::OnOK()
 		CDialogEx::OnOK();
 		return;
 	}
+	else
+		m_Buffer->Empty();
 	CDialogEx::OnCancel();
 }

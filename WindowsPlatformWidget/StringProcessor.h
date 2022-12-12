@@ -6,7 +6,7 @@
 #include <string>
 #include <Windows.h>
 
-_declspec(dllexport) bool WstringToString(const std::wstring Wstring, std::string& String);
-_declspec(dllexport) bool StringToWstring(const std::string String, std::wstring& Wstring);
+_declspec(dllexport) void WstringToString(const std::wstring Wstring, std::string& String);
+_declspec(dllexport) void StringToWstring(const std::string String, std::wstring& Wstring);
 
 #endif // !STRINGPROC_H

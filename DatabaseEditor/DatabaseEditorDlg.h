@@ -68,12 +68,6 @@ public:
 	afx_msg void OnBnClickedDelSelTblButton();
 	virtual void OnOK();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-private:
-	bool m_LCtrlDown;
-	bool m_RCtrlDown;
-	bool m_LShiftDown;
-	bool m_RShiftDown;
-public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnTblDescription();
 	afx_msg void OnDelRow();
@@ -85,4 +79,9 @@ public:
 	afx_msg void OnBnClickedAddRowButton();
 	afx_msg void OnBnClickedAddMultiRowButton();
 	afx_msg void OnRenameThisTbl();
+	void ModuleProcessor();
+private:
+	bool m_ExFunction;
+public:
+	CStatic m_ExFuncStatic;
 };

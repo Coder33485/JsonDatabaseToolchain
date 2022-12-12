@@ -12,6 +12,9 @@
 #define new DEBUG_NEW
 #endif
 
+typedef bool (*ModuleInitFunc)(std::string& MenuString, std::vector<std::string>& ParamList);
+typedef bool (*ModuleMain)(DatabaseHandle& Handle, std::vector<std::string>& ParamList);
+
 int GetColumnCount(CListCtrl* m_ListCtrl)
 {
 	CHeaderCtrl* pHeaderCtrl = m_ListCtrl->GetHeaderCtrl();
@@ -75,10 +78,7 @@ CDatabaseEditorDlg::CDatabaseEditorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DATABASEEDITOR_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	m_LCtrlDown = false;
-	m_RCtrlDown = false;
-	m_LShiftDown = false;
-	m_RShiftDown = false;
+	m_ExFunction = false;
 }
 
 void CDatabaseEditorDlg::DoDataExchange(CDataExchange* pDX)
@@ -86,6 +86,7 @@ void CDatabaseEditorDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_DATA_LIST, m_ListCtrl);
 	DDX_Control(pDX, IDC_TBL_COMBO, m_ComboTables);
+	DDX_Control(pDX, IDC_EXFUNC_WAIT_STATIC, m_ExFuncStatic);
 }
 
 BEGIN_MESSAGE_MAP(CDatabaseEditorDlg, CDialogEx)
@@ -140,6 +141,10 @@ BOOL CDatabaseEditorDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 	InitDatabaseHandle(Database);
+
+	m_ExFuncStatic.ShowWindow(SW_HIDE);
+
+	ModuleProcessor();
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -442,7 +447,7 @@ void CDatabaseEditorDlg::FlushFields()
 	GetFieldList(Database, list);
 	std::wstring wstr;
 	CString ID;
-	ID.LoadString(IDS_LINEID);
+	ID.LoadString(IDS_ROW_NUMBER);
 	m_ListCtrl.InsertColumn(0, ID);
 	for (size_t i = 0; i < list.size(); i++)
 	{
@@ -509,50 +514,45 @@ BOOL CDatabaseEditorDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_KEYDOWN)
 	{
-
-		switch (pMsg->wParam)
+		BOOL bCtrl = ::GetKeyState(VK_CONTROL) & 0x8000;
+		if (m_ExFunction)
 		{
-		case 'S'://Ctrl + S
-			if ((m_LCtrlDown || m_RCtrlDown) && !(m_LShiftDown || m_RShiftDown))
-				OnSaveDb(); return TRUE;
-			if ((m_LCtrlDown || m_RCtrlDown) && (m_LShiftDown || m_RShiftDown))
-				OnSaveAs(); return TRUE;
-			break;
-		case VK_LCONTROL:
-			m_LCtrlDown = true;
-			return TRUE;
-		case VK_RCONTROL:
-			m_LCtrlDown = true;
-			return TRUE;
-		case VK_LSHIFT:
-			m_LShiftDown = true;
-			return TRUE;
-		case VK_RSHIFT:
-			m_RShiftDown = true;
+			if (pMsg->wParam < 'A' || pMsg->wParam > 'Z')
+				return CDialogEx::PreTranslateMessage(pMsg);
+			m_ExFunction = false;
+			m_ExFuncStatic.ShowWindow(SW_HIDE);
+			switch (pMsg->wParam)
+			{
+			case 'S'://S
+				if (bCtrl)
+				{
+					OnSaveAs();
+					return TRUE;
+				}
+				break;
+			}
+			MessageBeep(MB_ICONERROR);
 			return TRUE;
 		}
-	}
-	if (pMsg->message == WM_KEYUP)
-	{
-		switch (pMsg->wParam)
-		{
-		case VK_LCONTROL:
-			m_LCtrlDown = false;
-			return TRUE;
-			break;
-		case VK_RCONTROL:
-			m_LCtrlDown = false;
-			return TRUE;
-			break;
-		case VK_LSHIFT:
-			m_LShiftDown = false;
-			return TRUE;
-			break;
-		case VK_RSHIFT:
-			m_RShiftDown = false;
-			return TRUE;
-			break;
-		}
+		else
+			switch (pMsg->wParam)
+			{
+			case 'S'://Ctrl + S
+				if (bCtrl)
+				{
+					OnSaveDb();
+					return TRUE;
+				}
+				break;
+			case 'K':
+				if (bCtrl)
+				{
+					m_ExFunction = true;
+					m_ExFuncStatic.ShowWindow(SW_SHOWNORMAL);
+					return TRUE;
+				}
+				break;
+			}
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
@@ -592,7 +592,9 @@ void CDatabaseEditorDlg::OnDelRow()
 		return;
 	size_t id = 0;
 	CGetNumberInputDlg Dlg;
-	if (Dlg.StartDialog(&id, L"行号") == IDCANCEL)
+	CString Tip;
+	Tip.LoadString(IDS_ROW_NUMBER);
+	if (Dlg.StartDialog(&id, Tip) == IDCANCEL)
 		return;
 	DeleteLine(Database, id);
 	FlushFields();
@@ -607,9 +609,12 @@ void CDatabaseEditorDlg::OnDelMultiRow()
 		return;
 	size_t id = 0, num = 0;
 	CGetNumberInputDlg Dlg;
-	if (Dlg.StartDialog(&id, L"起始行号") == IDCANCEL)
+	CString Tip;
+	Tip.LoadString(IDS_BEGIN_ROW_NUMBER);
+	if (Dlg.StartDialog(&id, Tip) == IDCANCEL)
 		return;
-	if (Dlg.StartDialog(&num, L"行数") == IDCANCEL)
+	Tip.LoadString(IDS_NUMBER_OF_ROW);
+	if (Dlg.StartDialog(&num, Tip) == IDCANCEL)
 		return;
 	DeleteLine(Database, id, num);
 	FlushFields();
@@ -649,9 +654,7 @@ void CDatabaseEditorDlg::OnAddRow()
 		else
 			Dlg.StartDialog(&Unit, w_str.c_str());
 		if (i == 0 && (Unit == L"/exit" || Unit == L"$exit" || Unit == L"\\exit"))
-		{
 			break;
-		}
 		unit_list.push_back(std::string(CW2A(Unit, CP_UTF8)));
 	}
 	AppendLine(Database, unit_list);
@@ -722,4 +725,53 @@ void CDatabaseEditorDlg::OnRenameThisTbl()
 	new_table_name = CW2A(NewTblName, CP_UTF8);
 	RenameTable(Database, Database.Table, new_table_name);
 	FlushTables();
+}
+
+
+void CDatabaseEditorDlg::ModuleProcessor()
+{
+	char* buffer = new char[256];
+	memset(buffer, 0, 256);
+	size_t len = GetModuleFileNameA(nullptr, buffer, 256);
+	if (len > 256)
+	{
+		delete[] buffer;
+		buffer = new char[len];
+		memset(buffer, 0, len * sizeof(char));
+		len = GetModuleFileNameA(nullptr, buffer, len);
+	}
+	for (size_t i = len; i != -1; i--)
+	{
+		if (buffer[i] == '\\')
+		{
+			buffer[i] = 0;
+			break;
+		}
+	}
+	std::string path = buffer;
+	std::vector<std::string> Modules;
+	delete[] buffer;
+	HANDLE hFile = INVALID_HANDLE_VALUE;
+	WIN32_FIND_DATAA pNextInfo;
+	hFile = FindFirstFileA((path + "\\Module*.dll").c_str(), &pNextInfo);
+	if (INVALID_HANDLE_VALUE == hFile)
+		return;
+	char infPath[MAX_PATH] = { 0 };
+	if (pNextInfo.cFileName[0] != '.')
+		Modules.push_back(pNextInfo.cFileName);
+	while (FindNextFileA(hFile, &pNextInfo))
+	{
+		if (pNextInfo.cFileName[0] == '.')
+			continue;
+		Modules.push_back(pNextInfo.cFileName);
+	}
+	HMODULE hLibrary = nullptr;
+	ModuleInitFunc InitFunc = nullptr;
+	ModuleMain MainFunc = nullptr;
+	for (size_t i = 0; i < Modules.size(); i++)
+	{
+		hLibrary = LoadLibraryA(Modules[i].c_str());
+		if (hLibrary)
+			FreeLibrary(hLibrary);
+	}
 }
