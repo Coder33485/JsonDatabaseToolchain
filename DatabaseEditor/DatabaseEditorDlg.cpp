@@ -207,9 +207,15 @@ void CDatabaseEditorDlg::SetAppIcon()
 void CDatabaseEditorDlg::OnAddFd()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	std::string fd_name;
 	CString FdName, Tip;
 	CGetInputDlg Dlg;
@@ -225,13 +231,19 @@ void CDatabaseEditorDlg::OnAddFd()
 void CDatabaseEditorDlg::OnAddTbl()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	CGetInputDlg Dlg;
 	CString TblName, Tip;
 	std::string tbl_name;
 	Tip.LoadString(IDS_TBL_NAME);
 	if (Dlg.StartDialog(&TblName, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	tbl_name = CW2A(TblName, CP_UTF8);
 	CreateTable(Database, tbl_name);
 	FlushTables();
@@ -249,7 +261,10 @@ void CDatabaseEditorDlg::OnCloseDb()
 void CDatabaseEditorDlg::OnDbDescription()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	CDatabaseDescriptionEditor Dlg;
 	Dlg.StartDialog(&Database);
 }
@@ -258,15 +273,24 @@ void CDatabaseEditorDlg::OnDbDescription()
 void CDatabaseEditorDlg::OnDelFd()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	std::string fd_name;
 	CString FdName, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_FD_NAME);
 	if (Dlg.StartDialog(&FdName, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	fd_name = CW2A(FdName, CP_UTF8);
 	DeleteField(Database, fd_name);
 	FlushFields();
@@ -276,13 +300,19 @@ void CDatabaseEditorDlg::OnDelFd()
 void CDatabaseEditorDlg::OnDelTbl()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	CGetInputDlg Dlg;
 	CString TblName, Tip;
 	std::string tbl_name;
 	Tip.LoadString(IDS_TBL_NAME);
 	if (Dlg.StartDialog(&TblName, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	tbl_name = CW2A(TblName, CP_UTF8);
 	DeleteTable(Database, tbl_name);
 	FlushTables();
@@ -299,15 +329,24 @@ void CDatabaseEditorDlg::OnNewDb()
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_DB_PATH);
 	if (Dlg.StartDialog(&Path, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	path = CW2A(Path, CP_UTF8);
 	Tip.LoadString(IDS_DB_NAME);
 	if (Dlg.StartDialog(&Name, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	name = CW2A(Name, CP_UTF8);
 	Tip.LoadString(IDS_DB_AUTHOR);
 	if (Dlg.StartDialog(&Author, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	author = CW2A(Author, CP_UTF8);
 	CreateDatabase(Database, path, name, author);
 	// TODO: 在此添加命令处理程序代码
@@ -317,13 +356,19 @@ void CDatabaseEditorDlg::OnNewDb()
 void CDatabaseEditorDlg::OnOpenDb()
 {
 	if (Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	std::string path;
 	CString Path, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_DB_PATH);
 	if (Dlg.StartDialog(&Path, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	path = CW2A(Path, CP_UTF8);
 	LoadDatabase(Database, path);
 	FlushTables();
@@ -333,17 +378,26 @@ void CDatabaseEditorDlg::OnOpenDb()
 void CDatabaseEditorDlg::OnRenameTbl()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	std::string old_table_name, new_table_name;
 	CString OldTblName, NewTblName, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_TBL_NAME);
 	if (Dlg.StartDialog(&OldTblName, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	old_table_name = CW2A(OldTblName, CP_UTF8);
 	Tip.LoadString(IDS_NEW_TBL_NAME);
 	if (Dlg.StartDialog(&NewTblName, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	new_table_name = CW2A(NewTblName, CP_UTF8);
 	RenameTable(Database, old_table_name, new_table_name);
 	FlushTables();
@@ -353,19 +407,31 @@ void CDatabaseEditorDlg::OnRenameTbl()
 void CDatabaseEditorDlg::OnRenemeFd()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	std::string old_field_name, new_field_name;
 	CString OldFdName, NewFdName, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_FD_NAME);
 	if (Dlg.StartDialog(&OldFdName, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	old_field_name = CW2A(OldFdName, CP_UTF8);
 	Tip.LoadString(IDS_NEW_FD_NAME);
 	if (Dlg.StartDialog(&NewFdName, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	new_field_name = CW2A(NewFdName, CP_UTF8);
 	RenameField(Database, old_field_name, new_field_name);
 	FlushFields();
@@ -375,7 +441,10 @@ void CDatabaseEditorDlg::OnRenemeFd()
 void CDatabaseEditorDlg::OnSaveDb()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	SaveDatabase(Database);
 }
 
@@ -383,13 +452,19 @@ void CDatabaseEditorDlg::OnSaveDb()
 void CDatabaseEditorDlg::OnSaveAs()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	std::string path;
 	CString Path, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_DB_PATH);
 	if (Dlg.StartDialog(&Path, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	path = CW2A(Path, CP_UTF8);
 	SaveDatabaseTo(Database, path);
 }
@@ -425,7 +500,10 @@ void CDatabaseEditorDlg::OnCbnSelchangeTblCombo()
 	CString TableName;
 	m_ComboTables.GetWindowText(TableName);
 	if (TableName == L"")
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	table_name = CW2A(TableName, CP_UTF8);
 	SelectTable(Database, table_name);
 	FlushFields();
@@ -439,9 +517,15 @@ void CDatabaseEditorDlg::FlushFields()
 		m_ListCtrl.DeleteColumn(0);
 	m_ListCtrl.DeleteAllItems();
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	std::wstringstream wss;
 	stringlist list, dat;
 	GetFieldList(Database, list);
@@ -480,11 +564,17 @@ void CDatabaseEditorDlg::FlushTables()
 {
 	m_ComboTables.ResetContent();
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	stringlist table_list;
 	std::wstring w_str;
 	if (!GetTableList(Database, table_list))
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	for (size_t i = 0; i < table_list.size(); i++)
 		StringToWstring(table_list[i], w_str); m_ComboTables.AddString(w_str.c_str());
 	m_ComboTables.SetCurSel(0);
@@ -495,9 +585,15 @@ void CDatabaseEditorDlg::FlushTables()
 void CDatabaseEditorDlg::OnBnClickedDelSelTblButton()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	DeleteTable(Database, Database.Table);
 	FlushTables();
 	FlushFields();
@@ -531,7 +627,7 @@ BOOL CDatabaseEditorDlg::PreTranslateMessage(MSG* pMsg)
 				}
 				break;
 			}
-			MessageBeep(MB_ICONERROR);
+			MessageBeep(MB_ICONHAND);
 			return TRUE;
 		}
 		else
@@ -541,6 +637,20 @@ BOOL CDatabaseEditorDlg::PreTranslateMessage(MSG* pMsg)
 				if (bCtrl)
 				{
 					OnSaveDb();
+					return TRUE;
+				}
+				break;
+			case 'N'://Ctrl + N
+				if (bCtrl)
+				{
+					OnNewDb();
+					return TRUE;
+				}
+				break;
+			case 'O'://Ctrl + O
+				if (bCtrl)
+				{
+					OnOpenDb();
 					return TRUE;
 				}
 				break;
@@ -566,7 +676,10 @@ void CDatabaseEditorDlg::OnDropFiles(HDROP hDropInfo)
 	//::DragFinish(hDropInfo);
 	std::string path = CW2A(m_FilePath, CP_UTF8);
 	if (Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	LoadDatabase(Database, path);
 	FlushTables();
 	CDialogEx::OnDropFiles(hDropInfo);
@@ -576,9 +689,15 @@ void CDatabaseEditorDlg::OnDropFiles(HDROP hDropInfo)
 void CDatabaseEditorDlg::OnTblDescription()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	CTableDescriptionEditor Dlg;
 	Dlg.StartDialog(&Database);
 }
@@ -587,15 +706,24 @@ void CDatabaseEditorDlg::OnTblDescription()
 void CDatabaseEditorDlg::OnDelRow()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	size_t id = 0;
 	CGetNumberInputDlg Dlg;
 	CString Tip;
 	Tip.LoadString(IDS_ROW_NUMBER);
 	if (Dlg.StartDialog(&id, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	DeleteLine(Database, id);
 	FlushFields();
 }
@@ -604,18 +732,30 @@ void CDatabaseEditorDlg::OnDelRow()
 void CDatabaseEditorDlg::OnDelMultiRow()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	size_t id = 0, num = 0;
 	CGetNumberInputDlg Dlg;
 	CString Tip;
 	Tip.LoadString(IDS_BEGIN_ROW_NUMBER);
 	if (Dlg.StartDialog(&id, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	Tip.LoadString(IDS_NUMBER_OF_ROW);
 	if (Dlg.StartDialog(&num, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	DeleteLine(Database, id, num);
 	FlushFields();
 }
@@ -636,9 +776,15 @@ void CDatabaseEditorDlg::OnBnClickedDelMultiRowButton()
 void CDatabaseEditorDlg::OnAddRow()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	stringlist list;
 	GetFieldList(Database, list);
 	CGetInputDlg Dlg;
@@ -665,9 +811,15 @@ void CDatabaseEditorDlg::OnAddRow()
 void CDatabaseEditorDlg::OnAddMultiRow()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	if (!Database.Selected)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	stringlist list;
 	GetFieldList(Database, list);
 	CGetInputDlg Dlg;
@@ -715,13 +867,19 @@ void CDatabaseEditorDlg::OnBnClickedAddMultiRowButton()
 void CDatabaseEditorDlg::OnRenameThisTbl()
 {
 	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	std::string new_table_name;
 	CString NewTblName, Tip;
 	CGetInputDlg Dlg;
 	Tip.LoadString(IDS_NEW_TBL_NAME);
 	if (Dlg.StartDialog(&NewTblName, Tip) == IDCANCEL)
+	{
+		MessageBeep(MB_ICONHAND);
 		return;
+	}
 	new_table_name = CW2A(NewTblName, CP_UTF8);
 	RenameTable(Database, Database.Table, new_table_name);
 	FlushTables();

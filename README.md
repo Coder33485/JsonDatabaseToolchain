@@ -52,6 +52,8 @@
 
 ## Shortcut key
 
+- `Ctrl` + `N` Create a new database.
+- `Ctrl` + `O` Open an existing database, you can also drag a database file to window to open the database.
 - `Ctrl` + `S` Save database.
 - `Ctrl` + `K` -> `Ctrl` + `S` Save the database to another location.
 
