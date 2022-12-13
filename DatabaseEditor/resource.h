@@ -22,6 +22,12 @@
 #define ID_DEL_MULTI_ROW                129
 #define ID_ADD_ROW                      130
 #define ID_ADD_MULTI_ROW                131
+#define ID_132                          132
+#define ID_133                          133
+#define ID_134                          134
+#define ID_135                          135
+#define ID_MODULE                       136
+#define ID_MODULE_TIPS                  137
 #define IDC_GETINPUT_AUTO_EDIT          10001
 #define IDC_TBL_COMBO                   10002
 #define IDC_ADD_FD_BUTTON               10003
@@ -68,14 +74,14 @@
 #define IDS_ROW_NUMBER                  20018
 #define IDS_BEGIN_ROW_NUMBER            20019
 #define IDS_NUMBER_OF_ROW               20020
-#define IDM_EXTERN_COMMAND              40000
+#define IDM_EXTERN_COMMAND              50000
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        20021
-#define _APS_NEXT_COMMAND_VALUE         132
+#define _APS_NEXT_COMMAND_VALUE         138
 #define _APS_NEXT_CONTROL_VALUE         10028
 #define _APS_NEXT_SYMED_VALUE           1001
 #endif

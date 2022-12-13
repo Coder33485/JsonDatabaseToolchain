@@ -55,6 +55,7 @@
 - `Ctrl` + `N` Create a new database.
 - `Ctrl` + `O` Open an existing database, you can also drag a database file to window to open the database.
 - `Ctrl` + `S` Save database.
+- `Ctrl` + `D` Close the database which is opened.
 - `Ctrl` + `K` -> `Ctrl` + `S` Save the database to another location.
 
 ## About canceling operations
@@ -62,6 +63,14 @@
 > `Add a row` and `Add multiple rows` can cancel the operation when entering the first value of each line, enter '/exit' '$exit' 'exit' or not. <br/>
 > All other operations that require data entry can be canceled before the final entry is completed, and a null value can be submitted in either input box. <br/>
 > Other operations that do not require data entry cannot be canceled.
+
+## About modules
+
+Support mounting external modules for operating databases, and allow external modules to use the input box of the editor to obtain data, but the number of data bars is fixed. <br/>
+The external module must have three functions: `ModuleInit` `ModuleMain` and `ModuleFree` for `Initialize Module` `Main Entry Function` and `Free Module`. <br/>
+External modules can be unloaded. <br/>
+Entries left over from external modules in the menu cannot be cleared for the time being. <br/>
+Put the module DLL into the program directory to load automatically when the program starts.
 
 ## At last
 

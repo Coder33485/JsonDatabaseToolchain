@@ -12,9 +12,6 @@
 #define new DEBUG_NEW
 #endif
 
-typedef bool (*ModuleInitFunc)(std::string& MenuString, std::vector<std::string>& ParamList);
-typedef bool (*ModuleMain)(DatabaseHandle& Handle, std::vector<std::string>& ParamList);
-
 int GetColumnCount(CListCtrl* m_ListCtrl)
 {
 	CHeaderCtrl* pHeaderCtrl = m_ListCtrl->GetHeaderCtrl();
@@ -252,6 +249,11 @@ void CDatabaseEditorDlg::OnAddTbl()
 
 void CDatabaseEditorDlg::OnCloseDb()
 {
+	if (!Database.Loaded)
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	InitDatabaseHandle(Database);
 	FlushTables();
 	FlushFields();
@@ -517,15 +519,9 @@ void CDatabaseEditorDlg::FlushFields()
 		m_ListCtrl.DeleteColumn(0);
 	m_ListCtrl.DeleteAllItems();
 	if (!Database.Loaded)
-	{
-		MessageBeep(MB_ICONHAND);
 		return;
-	}
 	if (!Database.Selected)
-	{
-		MessageBeep(MB_ICONHAND);
 		return;
-	}
 	std::wstringstream wss;
 	stringlist list, dat;
 	GetFieldList(Database, list);
@@ -564,17 +560,11 @@ void CDatabaseEditorDlg::FlushTables()
 {
 	m_ComboTables.ResetContent();
 	if (!Database.Loaded)
-	{
-		MessageBeep(MB_ICONHAND);
 		return;
-	}
 	stringlist table_list;
 	std::wstring w_str;
 	if (!GetTableList(Database, table_list))
-	{
-		MessageBeep(MB_ICONHAND);
 		return;
-	}
 	for (size_t i = 0; i < table_list.size(); i++)
 		StringToWstring(table_list[i], w_str); m_ComboTables.AddString(w_str.c_str());
 	m_ComboTables.SetCurSel(0);
@@ -654,6 +644,13 @@ BOOL CDatabaseEditorDlg::PreTranslateMessage(MSG* pMsg)
 					return TRUE;
 				}
 				break;
+			case 'D'://Ctrl + D
+				if (bCtrl)
+				{
+					OnCloseDb();
+					return TRUE;
+				}
+				break;
 			case 'K':
 				if (bCtrl)
 				{
@@ -663,6 +660,33 @@ BOOL CDatabaseEditorDlg::PreTranslateMessage(MSG* pMsg)
 				}
 				break;
 			}
+	}
+	else if (pMsg->message == WM_COMMAND)
+	{
+		if (pMsg->wParam < IDM_EXTERN_COMMAND)
+			return CDialogEx::PreTranslateMessage(pMsg);
+		stringlist ParamList;
+		for (size_t i = 0; i < m_RecordList.size(); i++)
+		{
+			if (pMsg->wParam == m_RecordList[i].MenuCommand)
+			{
+				if (m_RecordList[i].Loading && GetParamList(m_RecordList[i].ParamTypeList, m_RecordList[i].TipList, ParamList))
+					m_RecordList[i].MainFunc(Database, ParamList);
+				else
+					MessageBeep(MB_ICONHAND);
+			}
+			else if (pMsg->wParam == m_RecordList[i].MenuCommand + 1)
+			{
+				if (m_RecordList[i].Loading)
+				{
+					m_RecordList[i].FreeFunc();
+					FreeLibrary(m_RecordList[i].hModule);
+					m_RecordList[i].Loading = false;
+				}
+				else
+					MessageBeep(MB_ICONHAND);
+			}
+		}
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
@@ -926,10 +950,86 @@ void CDatabaseEditorDlg::ModuleProcessor()
 	HMODULE hLibrary = nullptr;
 	ModuleInitFunc InitFunc = nullptr;
 	ModuleMain MainFunc = nullptr;
+	ModuleFree FreeFunc = nullptr;
+	std::string MenuString;
+	std::wstring w_MenuString;
+	stringlist ParamTypeList, TipList;
+	m_RecordList.clear();
+	ModuleRecord RecTemp;
+	unsigned int LoadedModule = 0;
+	CMenu* pMenu = nullptr, * pSubMenu = nullptr;
+	pMenu = this->GetMenu();
+	pSubMenu = pMenu->GetSubMenu(2);
 	for (size_t i = 0; i < Modules.size(); i++)
 	{
 		hLibrary = LoadLibraryA(Modules[i].c_str());
 		if (hLibrary)
-			FreeLibrary(hLibrary);
+		{
+			InitFunc = (ModuleInitFunc)GetProcAddress(hLibrary, "ModuleInit");
+			MainFunc = (ModuleMain)GetProcAddress(hLibrary, "ModuleMain");
+			FreeFunc = (ModuleFree)GetProcAddress(hLibrary, "ModuleFree");
+			if (InitFunc && MainFunc && FreeFunc)
+			{
+				ParamTypeList.clear();
+				TipList.clear();
+				if (InitFunc(MenuString, ParamTypeList, TipList))
+				{
+					StringToWstring(MenuString, w_MenuString);
+					RecTemp.Loading = true;
+					RecTemp.hModule = hLibrary;
+					RecTemp.MenuCommand = IDM_EXTERN_COMMAND + LoadedModule;
+					RecTemp.MainFunc = MainFunc;
+					RecTemp.FreeFunc = FreeFunc;
+					RecTemp.ParamTypeList = ParamTypeList;
+					RecTemp.TipList = TipList;
+					m_RecordList.push_back(RecTemp);
+					pSubMenu->AppendMenu(MF_STRING, RecTemp.MenuCommand, w_MenuString.c_str());
+					pSubMenu->AppendMenu(MF_STRING, RecTemp.MenuCommand + 1, L"卸载该模块");
+					LoadedModule += 2;
+				}
+				else
+					FreeLibrary(hLibrary);
+			}
+			else
+				FreeLibrary(hLibrary);
+		}
 	}
+}
+
+
+bool CDatabaseEditorDlg::GetParamList(const stringlist ParamTypeList, const stringlist TipList, stringlist& ParamList)
+{
+	if (!Database.Loaded)
+		return false;
+	if (!Database.Selected)
+		return false;
+	CGetInputDlg StringDlg;
+	CGetNumberInputDlg NumberDlg;
+	CString Buffer;
+	std::wstring Tip;
+	std::string temp;
+	ParamList.clear();
+	for (size_t i = 0; i < ParamTypeList.size(); i++)
+	{
+		StringToWstring(TipList[i], Tip);
+		if (ParamTypeList[i] == u8"String")
+			if (StringDlg.StartDialog(&Buffer, Tip.c_str()) == IDCANCEL)
+				return false;
+			else
+			{
+				temp.clear();
+				WstringToString(Buffer.GetString(), temp);
+				ParamList.push_back(temp);
+			}
+		else if (ParamTypeList[i] == u8"Number")
+			if (NumberDlg.StartDialog(&Buffer, Tip.c_str()) == IDCANCEL)
+				return false;
+			else
+			{
+				temp.clear();
+				WstringToString(Buffer.GetString(), temp);
+				ParamList.push_back(temp);
+			}
+	}
+	return true;
 }

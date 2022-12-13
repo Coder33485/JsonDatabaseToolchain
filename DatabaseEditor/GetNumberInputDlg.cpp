@@ -16,7 +16,9 @@ IMPLEMENT_DYNAMIC(CGetNumberInputDlg, CDialogEx)
 CGetNumberInputDlg::CGetNumberInputDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_GETINPUT_DIALOG_NUMBER, pParent)
 {
+	ReturnNumber = false;
 	m_Number = nullptr;
+	m_Buffer = nullptr;
 	m_Tip = _T("");
 }
 
@@ -53,10 +55,24 @@ BOOL CGetNumberInputDlg::OnInitDialog()
 	m_Static.SetWindowText(m_Tip);
 
 	// TODO:  在此添加额外的初始化
-	if (!m_Number)
-		OnCancel();
-
-	*m_Number = 0;
+	if (ReturnNumber)
+	{
+		if (!m_Number)
+		{
+			CDialogEx::OnCancel();
+			return TRUE;
+		}
+		*m_Number = 0;
+	}
+	else
+	{
+		if (!m_Buffer)
+		{
+			CDialogEx::OnCancel();
+			return TRUE;
+		}
+		m_Buffer->Empty();
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
@@ -67,17 +83,32 @@ void CGetNumberInputDlg::OnOK()
 {
 	// TODO: 在此添加专用代码和/或调用基类
 	CString LocalBuffer;
-	m_Edit.GetWindowText(LocalBuffer);
-	if (LocalBuffer == L"")
-		*m_Number = -1;
+	if (ReturnNumber)
+	{
+		m_Edit.GetWindowText(LocalBuffer);
+		if (LocalBuffer == L"")
+			*m_Number = -1;
+		else
+		{
+			std::wstringstream wss;
+			wss.clear();
+			wss << LocalBuffer.GetString();
+			wss >> *m_Number;
+			CDialogEx::OnOK();
+			return;
+		}
+	}
 	else
 	{
-		std::wstringstream wss;
-		wss.clear();
-		wss << LocalBuffer.GetString();
-		wss >> *m_Number;
-		CDialogEx::OnOK();
-		return;
+		m_Edit.GetWindowText(LocalBuffer);
+		if (LocalBuffer == L"")
+			m_Buffer->Empty();
+		else
+		{
+			*m_Buffer = LocalBuffer;
+			CDialogEx::OnOK();
+			return;
+		}
 	}
 	CDialogEx::OnCancel();
 }
@@ -91,7 +122,16 @@ INT_PTR CGetNumberInputDlg::DoModal()
 
 INT_PTR CGetNumberInputDlg::StartDialog(size_t* Number, CString Tip)
 {
+	ReturnNumber = true;
 	m_Number = Number;
+	m_Tip = Tip;
+	return CDialogEx::DoModal();
+}
+
+INT_PTR CGetNumberInputDlg::StartDialog(CString* Buffer, CString Tip)
+{
+	ReturnNumber = false;
+	m_Buffer = Buffer;
 	m_Tip = Tip;
 	return CDialogEx::DoModal();
 }

@@ -14,6 +14,24 @@
 #include <sstream>
 
 
+typedef bool (*ModuleInitFunc)(std::string& MenuString, stringlist& ParamTypeList, stringlist& TipList);
+typedef bool (*ModuleMain)(DatabaseHandle& Handle, stringlist& ParamList);
+typedef bool (*ModuleFree)();
+
+typedef struct ModuleRecord
+{
+	bool Loading;
+	HMODULE hModule;
+	UINT_PTR MenuCommand;
+	ModuleMain MainFunc;
+	ModuleFree FreeFunc;
+	stringlist ParamTypeList;
+	stringlist TipList;
+} ModuleRecord;
+
+typedef std::vector<ModuleRecord> ModuleRecordList;
+
+
 // CDatabaseEditorDlg 对话框
 class CDatabaseEditorDlg : public CDialogEx
 {
@@ -82,6 +100,8 @@ public:
 	void ModuleProcessor();
 private:
 	bool m_ExFunction;
+	ModuleRecordList m_RecordList;
 public:
 	CStatic m_ExFuncStatic;
+	bool GetParamList(const stringlist ParamTypeList, const stringlist TipList, stringlist& ParamList);
 };
