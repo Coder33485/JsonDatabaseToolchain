@@ -566,7 +566,10 @@ void CDatabaseEditorDlg::FlushTables()
 	if (!GetTableList(Database, table_list))
 		return;
 	for (size_t i = 0; i < table_list.size(); i++)
-		StringToWstring(table_list[i], w_str); m_ComboTables.AddString(w_str.c_str());
+	{
+		StringToWstring(table_list[i], w_str);
+		m_ComboTables.AddString(w_str.c_str());
+	}
 	m_ComboTables.SetCurSel(0);
 	OnCbnSelchangeTblCombo();
 }
