@@ -1031,6 +1031,7 @@ void CDatabaseEditorDlg::ModuleProcessor()
 					RecTemp.ParamTypeList = ParamTypeList;
 					RecTemp.TipList = TipList;
 					m_RecordList.push_back(RecTemp);
+					pSubMenu->AppendMenu(MF_SEPARATOR);
 					pSubMenu->AppendMenu(MF_STRING, RecTemp.MenuCommand, w_MenuString.c_str());
 					pSubMenu->AppendMenu(MF_STRING, RecTemp.MenuCommand + 1, L"卸载该模块");
 					LoadedModule += 2;
