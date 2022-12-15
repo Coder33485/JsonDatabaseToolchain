@@ -76,4 +76,6 @@
 
 ### 用到的第三方项目
 
-- [nlohmann/json](https://github.com/nlohmann/json) - JSON for Modern C++.
+- 由DatabaseControler引用 -> [nlohmann/json](https://github.com/nlohmann/json) - JSON for Modern C++.
+- 由DatabaseControler引用 -> [zlib-1.2.13](http://zlib.net/) - A Massively Spiffy Yet Delicately Unobtrusive Compression Library.
+- 由DatabaseControler引用 -> [Crypto++](https://cryptopp.com/) - Free C++ Class Library of Cryptographic Schemes.

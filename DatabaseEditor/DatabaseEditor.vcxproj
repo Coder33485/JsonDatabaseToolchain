@@ -95,7 +95,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)DatabaseControler\;$(SolutionDir)WindowsPlatformWidget\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)DatabaseController\;$(SolutionDir)WindowsPlatformWidget\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,7 +120,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)DatabaseControler\;$(SolutionDir)WindowsPlatformWidget\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)DatabaseController\;$(SolutionDir)WindowsPlatformWidget\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,7 +143,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)DatabaseControler\;$(SolutionDir)WindowsPlatformWidget\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)DatabaseController\;$(SolutionDir)WindowsPlatformWidget\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,7 +168,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)DatabaseControler\;$(SolutionDir)WindowsPlatformWidget\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)DatabaseController\;$(SolutionDir)WindowsPlatformWidget\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -222,8 +222,8 @@
     <Image Include="res\DatabaseEditor.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DatabaseControler\DatabaseControler.vcxproj">
-      <Project>{2f62ef7f-344e-4929-a591-c6ae8867428c}</Project>
+    <ProjectReference Include="..\DatabaseController\DatabaseController.vcxproj">
+      <Project>{9ac02d37-df72-4f50-8375-42882e374436}</Project>
     </ProjectReference>
     <ProjectReference Include="..\WindowsPlatformWidget\WindowsPlatformWidget.vcxproj">
       <Project>{bbd35e92-19ed-4949-a7f3-81037bdb3ab4}</Project>

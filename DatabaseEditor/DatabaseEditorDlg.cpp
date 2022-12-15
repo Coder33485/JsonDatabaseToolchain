@@ -137,7 +137,7 @@ BOOL CDatabaseEditorDlg::OnInitDialog()
 	AdjustColumnWidth(&m_ListCtrl);
 
 	// TODO: 在此添加额外的初始化代码
-	InitDatabaseHandle(Database);
+	InitDatabaseHandle(m_Database);
 
 	m_ExFuncStatic.ShowWindow(SW_HIDE);
 
@@ -203,12 +203,12 @@ void CDatabaseEditorDlg::SetAppIcon()
 
 void CDatabaseEditorDlg::OnAddFd()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -220,14 +220,14 @@ void CDatabaseEditorDlg::OnAddFd()
 	if (Dlg.StartDialog(&FdName, Tip) == IDCANCEL)
 		return;
 	fd_name = CW2A(FdName, CP_UTF8);
-	CreateField(Database, fd_name);
+	CreateField(m_Database, fd_name);
 	FlushFields();
 }
 
 
 void CDatabaseEditorDlg::OnAddTbl()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -242,19 +242,19 @@ void CDatabaseEditorDlg::OnAddTbl()
 		return;
 	}
 	tbl_name = CW2A(TblName, CP_UTF8);
-	CreateTable(Database, tbl_name);
+	CreateTable(m_Database, tbl_name);
 	FlushTables();
 }
 
 
 void CDatabaseEditorDlg::OnCloseDb()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	InitDatabaseHandle(Database);
+	InitDatabaseHandle(m_Database);
 	FlushTables();
 	FlushFields();
 }
@@ -262,24 +262,24 @@ void CDatabaseEditorDlg::OnCloseDb()
 
 void CDatabaseEditorDlg::OnDbDescription()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
 	CDatabaseDescriptionEditor Dlg;
-	Dlg.StartDialog(&Database);
+	Dlg.StartDialog(&m_Database);
 }
 
 
 void CDatabaseEditorDlg::OnDelFd()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -294,14 +294,14 @@ void CDatabaseEditorDlg::OnDelFd()
 		return;
 	}
 	fd_name = CW2A(FdName, CP_UTF8);
-	DeleteField(Database, fd_name);
+	DeleteField(m_Database, fd_name);
 	FlushFields();
 }
 
 
 void CDatabaseEditorDlg::OnDelTbl()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -316,7 +316,11 @@ void CDatabaseEditorDlg::OnDelTbl()
 		return;
 	}
 	tbl_name = CW2A(TblName, CP_UTF8);
-	DeleteTable(Database, tbl_name);
+	if (!DeleteTable(m_Database, tbl_name))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	FlushTables();
 	FlushFields();
 }
@@ -324,7 +328,7 @@ void CDatabaseEditorDlg::OnDelTbl()
 
 void CDatabaseEditorDlg::OnNewDb()
 {
-	if (Database.Loaded)
+	if (m_Database.Loaded)
 		return;
 	std::string path, name, author;
 	CString Path, Name, Author, Tip;
@@ -350,14 +354,14 @@ void CDatabaseEditorDlg::OnNewDb()
 		return;
 	}
 	author = CW2A(Author, CP_UTF8);
-	CreateDatabase(Database, path, name, author);
+	CreateDatabase(m_Database, path, name, author);
 	// TODO: 在此添加命令处理程序代码
 }
 
 
 void CDatabaseEditorDlg::OnOpenDb()
 {
-	if (Database.Loaded)
+	if (m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -372,14 +376,18 @@ void CDatabaseEditorDlg::OnOpenDb()
 		return;
 	}
 	path = CW2A(Path, CP_UTF8);
-	LoadDatabase(Database, path);
+	if (!LoadDatabase(m_Database, path))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	FlushTables();
 }
 
 
 void CDatabaseEditorDlg::OnRenameTbl()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -401,19 +409,23 @@ void CDatabaseEditorDlg::OnRenameTbl()
 		return;
 	}
 	new_table_name = CW2A(NewTblName, CP_UTF8);
-	RenameTable(Database, old_table_name, new_table_name);
+	if (!RenameTable(m_Database, old_table_name, new_table_name))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	FlushTables();
 }
 
 
 void CDatabaseEditorDlg::OnRenemeFd()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -435,25 +447,33 @@ void CDatabaseEditorDlg::OnRenemeFd()
 		return;
 	}
 	new_field_name = CW2A(NewFdName, CP_UTF8);
-	RenameField(Database, old_field_name, new_field_name);
+	if (!RenameField(m_Database, old_field_name, new_field_name))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	FlushFields();
 }
 
 
 void CDatabaseEditorDlg::OnSaveDb()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	SaveDatabase(Database);
+	if (!SaveDatabase(m_Database))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 }
 
 
 void CDatabaseEditorDlg::OnSaveAs()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -468,7 +488,11 @@ void CDatabaseEditorDlg::OnSaveAs()
 		return;
 	}
 	path = CW2A(Path, CP_UTF8);
-	SaveDatabaseTo(Database, path);
+	if (!SaveDatabaseTo(m_Database, path))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 }
 
 
@@ -502,12 +526,13 @@ void CDatabaseEditorDlg::OnCbnSelchangeTblCombo()
 	CString TableName;
 	m_ComboTables.GetWindowText(TableName);
 	if (TableName == L"")
+		return;
+	table_name = CW2A(TableName, CP_UTF8);
+	if (!SelectTable(m_Database, table_name))
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	table_name = CW2A(TableName, CP_UTF8);
-	SelectTable(Database, table_name);
 	FlushFields();
 }
 
@@ -518,13 +543,13 @@ void CDatabaseEditorDlg::FlushFields()
 	for (int nIndex = 0; nIndex < int_itemcount; ++nIndex)
 		m_ListCtrl.DeleteColumn(0);
 	m_ListCtrl.DeleteAllItems();
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 		return;
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 		return;
 	std::wstringstream wss;
 	stringlist list, dat;
-	GetFieldList(Database, list);
+	GetFieldList(m_Database, list);
 	std::wstring wstr;
 	CString ID;
 	ID.LoadString(IDS_ROW_NUMBER);
@@ -533,8 +558,7 @@ void CDatabaseEditorDlg::FlushFields()
 	{
 		StringToWstring(list[i], wstr);
 		m_ListCtrl.InsertColumn(i + 1, wstr.c_str());
-		//#error "字符串是UTF8没有问题，但是汉字无法转为GBK显示，使用CA2W结果还是UTF8编码"
-		GetFieldData(Database, list[i], dat);
+		GetFieldData(m_Database, list[i], dat);
 		if (i == 0)
 			for (size_t j = 0; j < dat.size(); j++)
 			{
@@ -559,11 +583,11 @@ void CDatabaseEditorDlg::FlushFields()
 void CDatabaseEditorDlg::FlushTables()
 {
 	m_ComboTables.ResetContent();
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 		return;
 	stringlist table_list;
 	std::wstring w_str;
-	if (!GetTableList(Database, table_list))
+	if (!GetTableList(m_Database, table_list))
 		return;
 	for (size_t i = 0; i < table_list.size(); i++)
 	{
@@ -577,17 +601,21 @@ void CDatabaseEditorDlg::FlushTables()
 
 void CDatabaseEditorDlg::OnBnClickedDelSelTblButton()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	DeleteTable(Database, Database.Table);
+	if (!DeleteTable(m_Database, m_Database.SelectedTable))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	FlushTables();
 	FlushFields();
 }
@@ -674,7 +702,7 @@ BOOL CDatabaseEditorDlg::PreTranslateMessage(MSG* pMsg)
 			if (pMsg->wParam == m_RecordList[i].MenuCommand)
 			{
 				if (m_RecordList[i].Loading && GetParamList(m_RecordList[i].ParamTypeList, m_RecordList[i].TipList, ParamList))
-					m_RecordList[i].MainFunc(Database, ParamList);
+					m_RecordList[i].MainFunc(m_Database, ParamList);
 				else
 					MessageBeep(MB_ICONHAND);
 			}
@@ -702,12 +730,12 @@ void CDatabaseEditorDlg::OnDropFiles(HDROP hDropInfo)
 	::DragQueryFile(hDropInfo, 0, m_FilePath.GetBuffer(512), 512);
 	//::DragFinish(hDropInfo);
 	std::string path = CW2A(m_FilePath, CP_UTF8);
-	if (Database.Loaded)
+	if (m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	LoadDatabase(Database, path);
+	LoadDatabase(m_Database, path);
 	FlushTables();
 	CDialogEx::OnDropFiles(hDropInfo);
 }
@@ -715,29 +743,29 @@ void CDatabaseEditorDlg::OnDropFiles(HDROP hDropInfo)
 
 void CDatabaseEditorDlg::OnTblDescription()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
 	CTableDescriptionEditor Dlg;
-	Dlg.StartDialog(&Database);
+	Dlg.StartDialog(&m_Database);
 }
 
 
 void CDatabaseEditorDlg::OnDelRow()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -751,19 +779,23 @@ void CDatabaseEditorDlg::OnDelRow()
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	DeleteLine(Database, id);
+	if (!DeleteLine(m_Database, id))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	FlushFields();
 }
 
 
 void CDatabaseEditorDlg::OnDelMultiRow()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -783,7 +815,11 @@ void CDatabaseEditorDlg::OnDelMultiRow()
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	DeleteLine(Database, id, num);
+	if (!DeleteLine(m_Database, id, num))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	FlushFields();
 }
 
@@ -802,18 +838,18 @@ void CDatabaseEditorDlg::OnBnClickedDelMultiRowButton()
 
 void CDatabaseEditorDlg::OnAddRow()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
 	stringlist list;
-	GetFieldList(Database, list);
+	GetFieldList(m_Database, list);
 	CGetInputDlg Dlg;
 	CString Unit, Tip;
 	Tip.LoadString(IDS_EXIT_TIP);
@@ -830,25 +866,29 @@ void CDatabaseEditorDlg::OnAddRow()
 			break;
 		unit_list.push_back(std::string(CW2A(Unit, CP_UTF8)));
 	}
-	AppendLine(Database, unit_list);
+	if (!AppendLine(m_Database, unit_list))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	FlushFields();
 }
 
 
 void CDatabaseEditorDlg::OnAddMultiRow()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
 	}
 	stringlist list;
-	GetFieldList(Database, list);
+	GetFieldList(m_Database, list);
 	CGetInputDlg Dlg;
 	CString Unit, Tip;
 	Tip.LoadString(IDS_EXIT_TIP);
@@ -873,7 +913,8 @@ void CDatabaseEditorDlg::OnAddMultiRow()
 			unit_list.push_back(std::string(CW2A(Unit, CP_UTF8)));
 		}
 		if (loop)
-			AppendLine(Database, unit_list);
+			if (!AppendLine(m_Database, unit_list))
+				MessageBeep(MB_ICONHAND);
 	}
 	FlushFields();
 }
@@ -893,7 +934,7 @@ void CDatabaseEditorDlg::OnBnClickedAddMultiRowButton()
 
 void CDatabaseEditorDlg::OnRenameThisTbl()
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded || !m_Database.Selected)
 	{
 		MessageBeep(MB_ICONHAND);
 		return;
@@ -908,7 +949,11 @@ void CDatabaseEditorDlg::OnRenameThisTbl()
 		return;
 	}
 	new_table_name = CW2A(NewTblName, CP_UTF8);
-	RenameTable(Database, Database.Table, new_table_name);
+	if (!RenameTable(m_Database, m_Database.SelectedTable, new_table_name))
+	{
+		MessageBeep(MB_ICONHAND);
+		return;
+	}
 	FlushTables();
 }
 
@@ -1002,9 +1047,9 @@ void CDatabaseEditorDlg::ModuleProcessor()
 
 bool CDatabaseEditorDlg::GetParamList(const stringlist ParamTypeList, const stringlist TipList, stringlist& ParamList)
 {
-	if (!Database.Loaded)
+	if (!m_Database.Loaded)
 		return false;
-	if (!Database.Selected)
+	if (!m_Database.Selected)
 		return false;
 	CGetInputDlg StringDlg;
 	CGetNumberInputDlg NumberDlg;

@@ -44,7 +44,7 @@ BOOL CTableDescriptionEditor::OnInitDialog()
 		OnCancel();
 
 	std::wstring w_str;
-	StringToWstring(DB_Handle->TBL_Description.Message, w_str);
+	StringToWstring(DB_Handle->TableDescription.Message, w_str);
 	m_EditBlock.SetWindowText(w_str.c_str());
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -57,7 +57,7 @@ void CTableDescriptionEditor::OnOK()
 	// TODO: 在此添加专用代码和/或调用基类
 	CString Temp;
 	m_EditBlock.GetWindowText(Temp);
-	DB_Handle->TBL_Description.Message = CW2A(Temp, CP_UTF8);
+	DB_Handle->TableDescription.Message = CW2A(Temp, CP_UTF8);
 	SaveTableDescription(*DB_Handle);
 	CDialogEx::OnOK();
 }

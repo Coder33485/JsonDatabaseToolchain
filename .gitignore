@@ -364,3 +364,12 @@ FodyWeavers.xsd
 
 # User config
 ModuleExportDatabase
+/DatabaseController/CryptoPP/TestData
+/DatabaseController/CryptoPP/TestPrograms
+/DatabaseController/CryptoPP/TestVectors
+/DatabaseController/CryptoPP/dlltest.vcxproj.filters
+/DatabaseController/CryptoPP/dlltest.vcxproj
+/DatabaseController/CryptoPP/cryptest.vcxproj.filters
+/DatabaseController/CryptoPP/cryptest.vcxproj
+/DatabaseController/CryptoPP/cryptdll.vcxproj.filters
+/DatabaseController/CryptoPP/cryptdll.vcxproj

@@ -76,4 +76,6 @@ Put the module DLL into the program directory to load automatically when the pro
 
 ### Used third-party projects
 
-- [nlohmann/json](https://github.com/nlohmann/json) - JSON for Modern C++.
+- Referenced by DatabaseControler -> [nlohmann/json](https://github.com/nlohmann/json) - JSON for Modern C++.
+- Referenced by DatabaseControler -> [zlib-1.2.13](http://zlib.net/) - A Massively Spiffy Yet Delicately Unobtrusive Compression Library.
+- Referenced by DatabaseControler -> [Crypto++](https://cryptopp.com/) - Free C++ Class Library of Cryptographic Schemes.

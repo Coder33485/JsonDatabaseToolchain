@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "afxdialogex.h"
 
-#include <DatabaseControler.h>
+#include <DatabaseController.h>
 #include <StringProcessor.h>
 
 

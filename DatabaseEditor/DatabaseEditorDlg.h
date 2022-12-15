@@ -9,14 +9,14 @@
 #include "DatabaseDescriptionEditor.h"
 #include "TableDescriptionEditor.h"
 
-#include <DatabaseControler.h>
+#include <DatabaseController.h>
 #include <StringProcessor.h>
 #include <sstream>
 
 
 typedef bool (*ModuleInitFunc)(std::string& MenuString, stringlist& ParamTypeList, stringlist& TipList);
 typedef bool (*ModuleMain)(DatabaseHandle& Handle, stringlist& ParamList);
-typedef bool (*ModuleFree)();
+typedef void (*ModuleFree)();
 
 typedef struct ModuleRecord
 {
@@ -60,7 +60,7 @@ protected:
 public:
 	afx_msg void OnAbout();
 	afx_msg void OnExit();
-	DatabaseHandle Database;
+	DatabaseHandle m_Database;
 	void SetAppIcon();
 	CListCtrl m_ListCtrl;
 	afx_msg void OnAddFd();
