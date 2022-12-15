@@ -167,7 +167,6 @@ bool CreateDatabase(DatabaseHandle& Handle, const std::string Path, const std::s
 	Handle.File.open(Path, std::ios::out | std::ios::binary | std::ios::trunc);
 	if (!Handle.File.is_open())
 		return false;
-	Handle.File.close();
 	Handle.Loaded = true;
 	Handle.Path = Path;
 	Handle.Data[KEY_DATABASE_DESCRIPTION][KEY_DATABASE_NAME] = DatabaseName;
@@ -201,7 +200,6 @@ bool LoadDatabase(DatabaseHandle& Handle, const std::string Path)
 	}
 	nlohmann::json TempJson;
 	Handle.File >> TempJson;
-	Handle.File.close();
 	if (TempJson.contains(KEY_JDB_PKG_IDENTIFICATION) && TempJson[KEY_JDB_PKG_IDENTIFICATION].is_number() && TempJson[KEY_JDB_PKG_DATA].is_string())
 	{
 		size_t Identification = TempJson[KEY_JDB_PKG_IDENTIFICATION];
@@ -255,7 +253,6 @@ bool SaveDatabaseTo(DatabaseHandle& Handle, const std::string Path)
 	TempJson[KEY_JDB_PKG_IDENTIFICATION] = VAL_JDB_PKG_IDENTIFICATION;
 	TempJson[KEY_JDB_PKG_DATA] = EncryptedData;
 	Handle.File << TempJson;
-	Handle.File.close();
 	TempJson.clear();
 	EncryptedData.clear();
 	return true;
